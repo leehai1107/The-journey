@@ -3,7 +3,7 @@ package xhttp
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"time"
@@ -14,8 +14,8 @@ import (
 const (
 	defaultTimeout       = 30 * time.Second
 	defaultLogBodyLength = 3000
-	defaultNamespace     = "sendo"
-	defaultSubsystem     = "sendo"
+	defaultNamespace     = ""
+	defaultSubsystem     = ""
 )
 
 type Client interface {
@@ -161,7 +161,7 @@ func (c *client) Do(ctx context.Context, request *http.Request, target interface
 		_ = rsp.Body.Close()
 	}()
 
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	bodyBytes, err := io.ReadAll(rsp.Body)
 	if err != nil {
 		return 0, err
 	}

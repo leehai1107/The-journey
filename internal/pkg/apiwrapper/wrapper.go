@@ -22,9 +22,9 @@ Example success response:
 	    "code": 1,
 	    "message": "Thành công!",
 	    "data": {
-	        "station": {
-	            "code": "HUB210804225118",
-	            "name": "Sen Station GV"
+	        "abc": {
+	            "cde": "ikh",
+	            "fgh": "jkl"
 	        }
 	    },
 	}

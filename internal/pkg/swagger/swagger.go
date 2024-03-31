@@ -34,7 +34,7 @@ func (m *swagger) SwaggerHandler(isProduction bool) gin.HandlerFunc {
 			return
 		}
 		docs.SwaggerInfo.Host = strings.ToLower(c.Request.Host)
-		docs.SwaggerInfo.BasePath = "internal/api/v1"
+		docs.SwaggerInfo.BasePath = "/internal/api/v1"
 		c.Next()
 	}
 }
