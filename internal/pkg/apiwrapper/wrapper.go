@@ -27,7 +27,6 @@ Example success response:
 	            "name": "Sen Station GV"
 	        }
 	    },
-	    "trace_id": ""
 	}
 
 Example failure response:
@@ -43,7 +42,6 @@ Example failure response:
 		"result":{
 			"data":{}
 		}
-	    "trace_id": ""
 	}
 */
 type Response struct {

@@ -1,6 +1,7 @@
 /.idea/
 /vendor/
 
+.env
 coverage.html
 coverage.out
 app
@@ -10,3 +11,7 @@ app
 *.exe~
 *.dll
 __debug_bin
+.DS_Store
+
+# Go workspace file
+go.work

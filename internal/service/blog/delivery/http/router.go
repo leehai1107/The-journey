@@ -28,10 +28,20 @@ func NewRouter(
 func (p *routerIml) Register(r gin.IRouter) {
 	lg := logger.EnhanceWith(context.Background())
 	lg.Infow("RegisterRouterStart!")
-	//routes
-	gr := r.Group("")
+	//routes for apis
+	api := r.Group("api/v1")
 	{
-		gr.GET("/ping", func(c *gin.Context) {
+		api.GET("/ping", func(c *gin.Context) {
+			c.JSON(http.StatusOK, gin.H{
+				"now": time.Now(),
+			})
+		})
+	}
+
+	//routes for services
+	svc := r.Group("")
+	{
+		svc.GET("/ping", func(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{
 				"now": time.Now(),
 			})
