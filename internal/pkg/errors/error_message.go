@@ -8,4 +8,5 @@ const (
 	MsgGeneralError       = "Có lỗi xảy ra. Thử lại sau bạn nhé."
 	MsgBadRequest         = "Yêu cầu không hợp lệ!"
 	MsgAuthenticateFailed = "Không thể xác thực tài khoản!"
+	MsgDataError          = "Dữ liệu không hợp lệ vui lòng! Vui lòng thử lại."
 )

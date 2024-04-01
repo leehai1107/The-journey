@@ -14,11 +14,14 @@ func loadData() error {
 	// TODO: should load error table from db or config file and save memcache
 	errorMap = map[ErrorType]string{
 		Success:              MsgSuccess,
+		Fail:                 MsgFail,
 		Unknown:              MsgGeneralError,
 		BadRequestErr:        MsgBadRequest,
 		AuthenticationFailed: MsgAuthenticateFailed,
 		InternalServerError:  MsgGeneralError,
 		CallInternalAPIError: MsgGeneralError,
+		ParsingError:         MsgDataError,
+		InvalidData:          MsgDataError,
 	}
 	return nil
 }

@@ -36,4 +36,7 @@ const (
 	ConflictError ErrorType = -13
 	// Call GRPC Internal API Error
 	CallGRPCAPIError ErrorType = -14
+
+	//Failed
+	Fail ErrorType = -49
 )

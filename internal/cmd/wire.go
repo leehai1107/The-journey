@@ -9,6 +9,7 @@ import (
 	"github.com/leehai1107/The-journey/internal/cmd/banner"
 	apifx "github.com/leehai1107/The-journey/internal/di"
 	"github.com/leehai1107/The-journey/internal/pkg/config"
+	"github.com/leehai1107/The-journey/internal/pkg/errors"
 	"github.com/leehai1107/The-journey/internal/pkg/graceful"
 	"github.com/leehai1107/The-journey/internal/pkg/infra"
 	"github.com/leehai1107/The-journey/internal/pkg/logger"
@@ -40,6 +41,7 @@ func NewServer() *Server {
 func (s *Server) Run() {
 	app := fx.New(
 		fx.Invoke(config.InitConfig),
+		fx.Invoke(errors.Initialize),
 		fx.Invoke(infra.InitPostgresql),
 		//... add module here
 		apifx.Module,
