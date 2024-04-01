@@ -68,6 +68,10 @@ func ConvertTimeToGMT07(t time.Time) time.Time {
 	return t.In(GMT07Location())
 }
 
+func ConvertToUnixTime(t time.Time) int64 {
+	return t.Unix()
+}
+
 /*
 *
 Convert timestamp to string with custom RFC3339 format without GMT
