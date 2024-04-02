@@ -1,6 +1,6 @@
 <p align="center">
   <a href="" rel="noopener">
- <img width=200px height=200px src="https://i.imgur.com/a/splpaOr" alt="Project logo"></a>
+ <img width=200px height=200px src="https://i.imgur.com/fs0RA2R.jpeg" alt="Project logo"></a>
 </p>
 
 <h3 align="center">The Journey</h3>
