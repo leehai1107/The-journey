@@ -69,7 +69,7 @@ go run main.go internal
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
-- [MongoDB](https://www.postgresql.org/) - Database
+- [Postgres](https://www.postgresql.org/) - Database
 - [Gin](https://gin-gonic.com/) - Web Framework
 - [Templ](https://templ.guide/) - A HTML templating language for Go
 - [GORM](https://gorm.io/) -ORM Library
