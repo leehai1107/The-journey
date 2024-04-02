@@ -30,6 +30,7 @@ type ServerCfg struct {
 	HTTPPort   int    `envconfig:"USER_HTTP_PORT" default:"8080"`
 	LogLevel   string `envconfig:"LOG_LEVEL" default:"debug"`
 	Production bool   `envconfig:"PRODUCTION" default:"false"`
+	GinMode    string `envconfig:"GIN_MODE" default:"debug"`
 }
 
 type ServicesCfg struct{}

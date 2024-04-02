@@ -23,7 +23,7 @@ type NowFn func() time.Time
 type NowTimestampFn func() int64
 
 //nolint:gochecknoinits
-func init() {
+func Init() {
 	initTimezones()
 }
 

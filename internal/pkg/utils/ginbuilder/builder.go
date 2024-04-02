@@ -2,6 +2,7 @@ package ginbuilder
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/leehai1107/The-journey/internal/pkg/config"
 	"github.com/leehai1107/The-journey/internal/pkg/utils/ginutils"
 )
 
@@ -33,6 +34,7 @@ func (b *builder) Build() *gin.Engine {
 }
 
 func defaultGinEngine() *gin.Engine {
+	gin.SetMode(config.ServerConfig().GinMode)
 	e := gin.New()
 	return e
 }

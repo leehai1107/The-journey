@@ -16,6 +16,7 @@ import (
 	"github.com/leehai1107/The-journey/internal/pkg/recover"
 	"github.com/leehai1107/The-journey/internal/pkg/swagger"
 	"github.com/leehai1107/The-journey/internal/pkg/utils/ginbuilder"
+	"github.com/leehai1107/The-journey/internal/pkg/utils/timeutils"
 	"github.com/leehai1107/The-journey/internal/service/blog/delivery/http"
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
@@ -42,6 +43,7 @@ func (s *Server) Run() {
 	app := fx.New(
 		fx.Invoke(config.InitConfig),
 		fx.Invoke(errors.Initialize),
+		fx.Invoke(timeutils.Init),
 		fx.Invoke(infra.InitPostgresql),
 		//... add module here
 		apifx.Module,
