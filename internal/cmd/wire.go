@@ -42,6 +42,7 @@ func NewServer() *Server {
 func (s *Server) Run() {
 	app := fx.New(
 		fx.Invoke(config.InitConfig),
+		fx.Invoke(initLogger),
 		fx.Invoke(errors.Initialize),
 		fx.Invoke(timeutils.Init),
 		fx.Invoke(infra.InitPostgresql),
@@ -99,4 +100,7 @@ func startServer(lifecycle fx.Lifecycle, g *gin.Engine) {
 			},
 		},
 	)
+}
+func initLogger() {
+	logger.Initialize(config.ServerConfig().Logger)
 }
