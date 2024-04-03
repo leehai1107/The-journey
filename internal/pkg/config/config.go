@@ -31,7 +31,7 @@ type ServerCfg struct {
 	LogLevel   string `envconfig:"LOG_LEVEL" default:"debug"`
 	Production bool   `envconfig:"PRODUCTION" default:"false"`
 	GinMode    string `envconfig:"GIN_MODE" default:"debug"`
-	Logger     bool   `envconfig:"LOGGER" default:"true"`
+	Logger     bool   `envconfig:"LOGGER" default:"false"`
 }
 
 type ServicesCfg struct{}
