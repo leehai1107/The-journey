@@ -8,6 +8,10 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+const (
+	timeLayout = "2006-01-02 15:04:05"
+)
+
 var (
 	sg   *zap.SugaredLogger
 	zl   LoggerInterface
@@ -46,6 +50,7 @@ func Initialize(production bool) {
 		} else {
 			config := zap.NewDevelopmentConfig()
 			config.EncoderConfig.EncodeLevel = CapitalLevelEncoder
+			config.EncoderConfig.EncodeTime = zapcore.TimeEncoderOfLayout(timeLayout)
 			logger, _ = config.Build()
 		}
 		// Add option: AddCallerSkip to skip report wrapper as caller in log file
