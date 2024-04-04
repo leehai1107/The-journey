@@ -3,6 +3,7 @@ package ginutils
 import (
 	"bytes"
 	"net/http/httputil"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -38,10 +39,21 @@ func Logger(skipPaths ...string) gin.HandlerFunc {
 		lg := logger.EnhanceWith(c)
 		start := time.Now()
 		path := c.FullPath()
-		blw := &bodyLogWriter{body: bytes.NewBufferString(""), ResponseWriter: c.Writer}
-		c.Writer = blw
-		c.Next()
-		if _, ok := skip[path]; !ok {
+
+		// Check if the path matches any of the skip paths
+		skipLogging := false
+		for skipPath := range skip {
+			if strings.HasPrefix(path, skipPath) {
+				skipLogging = true
+				break
+			}
+		}
+
+		if !skipLogging {
+			blw := &bodyLogWriter{body: bytes.NewBufferString(""), ResponseWriter: c.Writer}
+			c.Writer = blw
+			c.Next()
+
 			reqDump, err := httputil.DumpRequest(c.Request, true)
 			if err != nil {
 				return
@@ -53,6 +65,9 @@ func Logger(skipPaths ...string) gin.HandlerFunc {
 				"latency.ms", time.Since(start).Milliseconds(),
 				"status", c.Writer.Status(),
 				"ip", c.ClientIP())
+		} else {
+			// If skipping logging, just proceed to the next middleware
+			c.Next()
 		}
 	}
 }
