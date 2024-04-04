@@ -8,9 +8,12 @@
 <div align="center">
 
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
+[![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/leehai1107/The-journey)]()
 [![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/leehai1107/The-journey)](https://github.com/leehai1107/The-journey/issues)
 [![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr/leehai1107/The-journey)](https://github.com/leehai1107/The-journey/pulls)
+[![Go Report Card](https://goreportcard.com/badge/github.com/leehai1107/The-journey)](https://goreportcard.com/report/github.com/leehai1107/The-journey)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
+[![GitHub Repo stars](https://img.shields.io/github/stars/leehai1107/The-journey)](https://github.com/leehai1107/The-journey/stargazers)
 
 </div>
 
