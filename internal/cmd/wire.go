@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/leehai1107/The-journey/internal/cmd/banner"
 	apifx "github.com/leehai1107/The-journey/internal/di"
@@ -71,6 +72,7 @@ func registerService(
 ) {
 	internal := g.Group("/internal")
 	internal.Use(recover.RPanic)
+	internal.Use(cors.Default()) //Default() cors -> AllowAll()
 	router.Register(internal)
 }
 
