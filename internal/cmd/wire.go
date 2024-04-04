@@ -73,7 +73,7 @@ func registerService(
 	internal := g.Group("/internal")
 	internal.Use(
 		recover.RPanic,
-		cors.CorsCfg(config.ServerConfig().Production))
+		cors.CorsCfg(config.ServerConfig().CorsProduction))
 	router.Register(internal)
 }
 

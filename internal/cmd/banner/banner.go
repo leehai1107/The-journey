@@ -3,6 +3,7 @@ package banner
 import "log"
 
 func Print() {
+	// Note: Generated ASCII banner online: http://patorjk.com/software/taag/#p=display&f=ANSI%20Shadow&t=the-journey
 	log.Println("|--------------------------------------------------------------------------------------------|")
 	log.Println("|████████╗██╗  ██╗███████╗           ██╗ ██████╗ ██╗   ██╗██████╗ ███╗   ██╗███████╗██╗   ██╗|")
 	log.Println("|╚══██╔══╝██║  ██║██╔════╝           ██║██╔═══██╗██║   ██║██╔══██╗████╗  ██║██╔════╝╚██╗ ██╔╝|")
