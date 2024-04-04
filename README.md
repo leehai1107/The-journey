@@ -68,7 +68,7 @@ Start the development server by running
 go run main.go internal
 ```
 
-(Optional)Create .env from .env.example
+(Optional) Create .env from .env.example
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
