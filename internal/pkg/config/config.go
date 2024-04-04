@@ -10,6 +10,7 @@ var (
 	server   ServerCfg
 	dbCfg    DBCfg
 	services ServicesCfg
+	cors     CorsCfg
 )
 
 type DBCfg struct {
@@ -36,11 +37,17 @@ type ServerCfg struct {
 
 type ServicesCfg struct{}
 
+type CorsCfg struct {
+	Google   string `envconfig:"GOOGLE" default:"https://www.google.com/"`
+	Facebook string `envconfig:"FACEBOOK" default:"https://www.facebook.com/"`
+}
+
 func InitConfig() {
 	configs := []interface{}{
 		&server,
 		&services,
 		&dbCfg,
+		&cors,
 	}
 	for _, instance := range configs {
 		err := envconfig.Process("", instance)
@@ -60,4 +67,8 @@ func ServiceConfig() ServicesCfg {
 
 func DBConfig() DBCfg {
 	return dbCfg
+}
+
+func CorsConfig() CorsCfg {
+	return cors
 }

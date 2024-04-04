@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/leehai1107/The-journey/internal/cmd/banner"
 	apifx "github.com/leehai1107/The-journey/internal/di"
@@ -14,6 +13,7 @@ import (
 	"github.com/leehai1107/The-journey/internal/pkg/graceful"
 	"github.com/leehai1107/The-journey/internal/pkg/infra"
 	"github.com/leehai1107/The-journey/internal/pkg/logger"
+	"github.com/leehai1107/The-journey/internal/pkg/middleware/cors"
 	"github.com/leehai1107/The-journey/internal/pkg/recover"
 	"github.com/leehai1107/The-journey/internal/pkg/swagger"
 	"github.com/leehai1107/The-journey/internal/pkg/utils/ginbuilder"
@@ -71,8 +71,9 @@ func registerService(
 	router http.Router,
 ) {
 	internal := g.Group("/internal")
-	internal.Use(recover.RPanic)
-	internal.Use(cors.Default()) //Default() cors -> AllowAll()
+	internal.Use(
+		recover.RPanic,
+		cors.CorsCfg(config.ServerConfig().Production))
 	router.Register(internal)
 }
 
