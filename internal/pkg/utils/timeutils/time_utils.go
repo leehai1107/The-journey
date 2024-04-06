@@ -9,6 +9,18 @@ import (
 const (
 	customRFC3339 = "2006-01-02T15:04:05"
 	FormatYMD     = "yyyy-MM-dd"
+	// YYYY_MM_DD_HH_MM_SS_SSS is the format "2006-01-02 15:04:05.000".
+	YYYY_MM_DD_HH_MM_SS_SSS = "2006-01-02 15:04:05.000"
+	// YYYY_MM_DD_HH_MM_SS is the format "2006-01-02 15:04:05".
+	YYYY_MM_DD_HH_MM_SS = "2006-01-02 15:04:05"
+	// YYYY_MM_DD is the format "2006-01-02".
+	YYYY_MM_DD = "2006-01-02"
+	// DD_MM_YYYY is the format "02-01-2006".
+	DD_MM_YYYY = "02-01-2006"
+	// DD_MM_YYYY_HH_MM_SS is the format "02-01-2006 15:04:05".
+	DD_MM_YYYY_HH_MM_SS = "02-01-2006 15:04:05"
+	// DD_MM_YYYY_HH_MM_SS_SSS is the format "02-01-2006 15:04:05.000".
+	DD_MM_YYYY_HH_MM_SS_SSS = "02-01-2006 15:04:05.000"
 
 	DMFormat = "d/m"
 )

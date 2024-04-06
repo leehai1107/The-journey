@@ -61,11 +61,7 @@ func (s *Server) Run() {
 }
 
 func provideGinEngine() *gin.Engine {
-	return ginbuilder.BaseBuilder().
-		WithBodyLogger("/metrics",
-			"/internal/api/v1",
-			"/internal/swagger/*any").
-		Build()
+	return ginbuilder.BaseBuilder().Build()
 }
 
 func registerService(
