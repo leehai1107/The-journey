@@ -29,11 +29,11 @@ const (
 )
 
 // Encrypt encrypts the given data using the provided key and returns the encoded string.
-func Encrypt(data []byte, key string, encryptionType EncryptionType) (string, error) {
+func Encrypt(data []byte, key interface{}, encryptionType EncryptionType) (string, error) {
 	switch encryptionType {
 	case AES:
 		// AES encryption
-		return encryptAES(data, key)
+		return encryptAES(data, key.(string))
 	case RSA:
 		// RSA encryption
 		return encryptRSA(data, key)
@@ -43,11 +43,11 @@ func Encrypt(data []byte, key string, encryptionType EncryptionType) (string, er
 }
 
 // Decrypt decrypts the given string using the provided key and returns the original data.
-func Decrypt(encodedData string, key string, encryptionType EncryptionType) ([]byte, error) {
+func Decrypt(encodedData string, key interface{}, encryptionType EncryptionType) ([]byte, error) {
 	switch encryptionType {
 	case AES:
 		// AES decryption
-		return decryptAES(encodedData, key)
+		return decryptAES(encodedData, key.(string))
 	case RSA:
 		// RSA decryption
 		return decryptRSA(encodedData, key)
