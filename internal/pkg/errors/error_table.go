@@ -22,6 +22,8 @@ func loadData() error {
 		CallInternalAPIError: MsgGeneralError,
 		ParsingError:         MsgDataError,
 		InvalidData:          MsgDataError,
+		EncryptError:         MsgEncryptError,
+		DecryptError:         MsgDecryptError,
 	}
 	return nil
 }

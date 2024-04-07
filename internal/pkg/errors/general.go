@@ -36,6 +36,12 @@ const (
 	ConflictError ErrorType = -13
 	// Call GRPC Internal API Error
 	CallGRPCAPIError ErrorType = -14
+	// EncryptError
+	EncryptError ErrorType = -15
+	// DecryptError
+	DecryptError ErrorType = -16
+	// MethodError
+	MethodError ErrorType = -17
 
 	//Failed
 	Fail ErrorType = -49
