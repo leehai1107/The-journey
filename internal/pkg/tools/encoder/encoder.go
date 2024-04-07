@@ -24,8 +24,9 @@ const (
 
 // Key lengths for different encryption algorithms
 const (
-	minAESKeyLength = 16
-	maxAESKeyLength = 18
+	bytesAES128 = 16
+	bytesAES192 = 24
+	byteAES256  = 32
 )
 
 // Encrypt encrypts the given data using the provided key and returns the encoded string.
@@ -214,13 +215,25 @@ func GenerateRSAKeyPair(keySize int) (*rsa.PrivateKey, error) {
 
 // GenerateAESKey generates a random AES key of the specified length
 func GenerateAESKey(keyLength int) (string, error) {
-	if keyLength < minAESKeyLength || keyLength > maxAESKeyLength {
-		return "", errors.InvalidData.New()
-	}
 	key := make([]byte, keyLength)
 	if _, err := rand.Read(key); err != nil {
 		return "", err
 	}
 
-	return base64.URLEncoding.EncodeToString(key), nil
+	res := base64.URLEncoding.EncodeToString(key)
+	if ValidateAESKey(res) {
+		return res, nil
+	}
+	return "", errors.InvalidData.New()
+}
+
+// ValidateAESKey checks if the given key is a valid AES key
+func ValidateAESKey(key string) bool {
+	k := len([]byte(key))
+	switch k {
+	default:
+		return false
+	case bytesAES128, bytesAES192, byteAES256:
+		return true
+	}
 }
