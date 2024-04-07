@@ -1,6 +1,10 @@
 package conv
 
-import "strconv"
+import (
+	"encoding/json"
+	"strconv"
+	"time"
+)
 
 // ConvertStringToInt converts string to int
 func ConvertStringToInt(numStr string) (int, error) {
@@ -141,6 +145,32 @@ func ConvertFloat32ToString(num float32) string {
 // ConvertFloat64ToString convert float32 to string
 func ConvertFloat64ToString(num float64) string {
 	return convertFloatToString(num, 64)
+}
+
+func AsString(src interface{}) string {
+	switch value := src.(type) {
+	case string:
+		return value
+	case []byte:
+		return string(value)
+	case int:
+		return strconv.Itoa(value)
+	case int32:
+		return strconv.FormatInt(int64(value), 10)
+	case int64:
+		return strconv.FormatInt(value, 10)
+	case float32:
+		return strconv.FormatFloat(float64(value), 'f', -1, 64)
+	case float64:
+		return strconv.FormatFloat(value, 'f', -1, 64)
+	case time.Time:
+		return value.Format("2006/01/02 15:04:05")
+	case bool:
+		return strconv.FormatBool(value)
+	default:
+		bytes, _ := json.Marshal(src)
+		return string(bytes)
+	}
 }
 
 func convertStringToNumber(numStr string, bitSize int) (int64, error) {
