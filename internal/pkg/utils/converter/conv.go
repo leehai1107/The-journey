@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/json"
+	"fmt"
 	"math"
 	"reflect"
 	"strconv"
@@ -207,6 +208,85 @@ func ConvertAnyToBytes(value any) ([]byte, error) {
 		newValue, err := json.Marshal(value)
 		return newValue, err
 	}
+}
+
+// ConvertMapToStruct converts map to struct
+func ConvertMapToStruct(m map[string]any, structObj any) error {
+	for k, v := range m {
+		err := setStructField(structObj, k, v)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func setStructField(structObj any, fieldName string, fieldValue any) error {
+	structVal := reflect.ValueOf(structObj).Elem()
+
+	fName := getFieldNameByJsonTag(structObj, fieldName)
+	if fName == "" {
+		return fmt.Errorf("struct field json tag don't match map key : %s in obj", fieldName)
+	}
+
+	fieldVal := structVal.FieldByName(fName)
+
+	if !fieldVal.IsValid() {
+		return fmt.Errorf("no such field: %s in obj", fieldName)
+	}
+
+	if !fieldVal.CanSet() {
+		return fmt.Errorf("cannot set %s field value", fieldName)
+	}
+
+	val := reflect.ValueOf(fieldValue)
+
+	if fieldVal.Type() != val.Type() {
+
+		if val.CanConvert(fieldVal.Type()) {
+			fieldVal.Set(val.Convert(fieldVal.Type()))
+			return nil
+		}
+
+		if m, ok := fieldValue.(map[string]any); ok {
+
+			if fieldVal.Kind() == reflect.Struct {
+				return ConvertMapToStruct(m, fieldVal.Addr().Interface())
+			}
+
+			if fieldVal.Kind() == reflect.Ptr && fieldVal.Type().Elem().Kind() == reflect.Struct {
+				if fieldVal.IsNil() {
+					fieldVal.Set(reflect.New(fieldVal.Type().Elem()))
+				}
+
+				return ConvertMapToStruct(m, fieldVal.Interface())
+			}
+
+		}
+
+		return fmt.Errorf("map value type don't match struct field type")
+	}
+
+	fieldVal.Set(val)
+
+	return nil
+}
+
+func getFieldNameByJsonTag(structObj any, jsonTag string) string {
+	s := reflect.TypeOf(structObj).Elem()
+
+	for i := 0; i < s.NumField(); i++ {
+		field := s.Field(i)
+		tag := field.Tag
+		name := tag.Get("json")
+
+		if name == jsonTag {
+			return field.Name
+		}
+	}
+
+	return ""
 }
 
 func AsString(src interface{}) string {

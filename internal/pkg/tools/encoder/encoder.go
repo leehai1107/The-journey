@@ -8,10 +8,9 @@ import (
 	"crypto/rsa"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"io"
 	"strings"
-
-	"github.com/leehai1107/The-journey/internal/pkg/errors"
 )
 
 // EncryptionType represents the type of encryption algorithm used
@@ -47,7 +46,7 @@ func Encrypt(data []byte, key interface{}, encryptionType EncryptionType) (strin
 		// RSA encryption
 		return encryptRSA(data, key)
 	default:
-		return "", errors.MethodError.New()
+		return "", errors.New("invalid encryption type")
 	}
 }
 
@@ -64,7 +63,7 @@ func Decrypt(encodedData string, key interface{}, encryptionType EncryptionType)
 		// RSA decryption
 		return decryptRSA(encodedData, key)
 	default:
-		return nil, errors.MethodError.New()
+		return nil, errors.New("invalid encryption type")
 	}
 }
 
@@ -99,7 +98,7 @@ func decryptAES(encodedData string, key string) ([]byte, error) {
 		return nil, err
 	}
 	if len(ciphertext) < aes.BlockSize {
-		return nil, errors.InvalidData.New()
+		return nil, errors.New("ciphertext is too short")
 	}
 	iv := ciphertext[:aes.BlockSize]
 	ciphertext = ciphertext[aes.BlockSize:]
@@ -115,7 +114,7 @@ func encryptRSA(data []byte, key interface{}) (string, error) {
 	// Convert the key to *rsa.PublicKey
 	rsaPubKey, ok := key.(*rsa.PublicKey)
 	if !ok {
-		return "", errors.EncryptError.New()
+		return "", errors.New("invalid key type")
 	}
 
 	// Encrypt data using RSA public key
@@ -132,7 +131,7 @@ func decryptRSA(encodedData string, key interface{}) ([]byte, error) {
 	// Convert the key to *rsa.PrivateKey
 	rsaPrivKey, ok := key.(*rsa.PrivateKey)
 	if !ok {
-		return nil, errors.InvalidData.New()
+		return nil, errors.New("invalid key type")
 	}
 
 	// Decode base64 encoded ciphertext
@@ -176,7 +175,7 @@ func decryptDES(encodedData string, key string) ([]byte, error) {
 		return nil, err
 	}
 	if len(ciphertext) < des.BlockSize {
-		return nil, errors.InvalidData.New()
+		return nil, errors.New("ciphertext is too short")
 	}
 	iv := ciphertext[:des.BlockSize]
 	ciphertext = ciphertext[des.BlockSize:]
@@ -203,7 +202,7 @@ func EncodeJSON(data interface{}, key interface{}, encryptionType EncryptionType
 		// For AES encryption, use the provided key as a string
 		aesKey, ok := key.(string)
 		if !ok {
-			return "", errors.InvalidData.New()
+			return "", errors.New("invalid key type")
 		}
 		encryptedData, err = Encrypt(jsonData, aesKey, AES)
 		if err != nil {
@@ -213,7 +212,7 @@ func EncodeJSON(data interface{}, key interface{}, encryptionType EncryptionType
 		// For DES encryption, use the provided key as a string
 		desKey, ok := key.(string)
 		if !ok {
-			return "", errors.InvalidData.New()
+			return "", errors.New("invalid key type")
 		}
 		encryptedData, err = encryptDES(jsonData, desKey)
 		if err != nil {
@@ -226,7 +225,7 @@ func EncodeJSON(data interface{}, key interface{}, encryptionType EncryptionType
 			return "", err
 		}
 	default:
-		return "", errors.EncryptError.New()
+		return "", errors.New("invalid encryption type")
 	}
 
 	return encryptedData, nil
@@ -243,7 +242,7 @@ func DecodeJSON(encodedData string, key interface{}, v interface{}, encryptionTy
 		// For AES decryption, use the provided key as a string
 		aesKey, ok := key.(string)
 		if !ok {
-			return errors.InvalidData.New()
+			return errors.New("invalid key type")
 		}
 		decryptedData, err = Decrypt(encodedData, aesKey, AES)
 		if err != nil {
@@ -253,7 +252,7 @@ func DecodeJSON(encodedData string, key interface{}, v interface{}, encryptionTy
 		// For DES decryption, use the provided key as a string
 		desKey, ok := key.(string)
 		if !ok {
-			return errors.InvalidData.New()
+			return errors.New("invalid key type")
 		}
 		decryptedData, err = decryptDES(encodedData, desKey)
 		if err != nil {
@@ -266,7 +265,7 @@ func DecodeJSON(encodedData string, key interface{}, v interface{}, encryptionTy
 			return err
 		}
 	default:
-		return errors.DecryptError.New()
+		return errors.New("invalid encryption type")
 	}
 
 	// Unmarshal the decrypted data from JSON format
@@ -290,7 +289,7 @@ func GenerateRSAKeyPair(keySize int) (*rsa.PrivateKey, error) {
 func GenerateAESKey(keyLength int) (string, error) {
 	switch keyLength {
 	default:
-		return "", errors.InvalidData.New()
+		return "", errors.New("invalid key length")
 	case bytesAES128, bytesAES192, bytesAES256:
 		key := make([]byte, keyLength)
 		if _, err := rand.Read(key); err != nil {
