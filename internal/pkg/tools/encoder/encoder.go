@@ -3,11 +3,13 @@ package encoder
 import (
 	"crypto/aes"
 	"crypto/cipher"
+	"crypto/des"
 	"crypto/rand"
 	"crypto/rsa"
 	"encoding/base64"
 	"encoding/json"
 	"io"
+	"strings"
 
 	"github.com/leehai1107/The-journey/internal/pkg/errors"
 )
@@ -20,21 +22,27 @@ const (
 	AES EncryptionType = iota
 	// RSA is another type of encryption
 	RSA
+	// DES is another type of encryption
+	DES
 )
 
 // Key lengths for different encryption algorithms
 const (
+	bytesDES    = 8
 	bytesAES128 = 16
 	bytesAES192 = 24
-	byteAES256  = 32
+	bytesAES256 = 32
 )
 
-// Encrypt encrypts the given data using the provided key and returns the encoded string.
+// Encrypt encrypts the given data using the provided key and encryption algorithm.
 func Encrypt(data []byte, key interface{}, encryptionType EncryptionType) (string, error) {
 	switch encryptionType {
 	case AES:
 		// AES encryption
 		return encryptAES(data, key.(string))
+	case DES:
+		// DES encryption
+		return encryptDES(data, key.(string))
 	case RSA:
 		// RSA encryption
 		return encryptRSA(data, key)
@@ -43,12 +51,15 @@ func Encrypt(data []byte, key interface{}, encryptionType EncryptionType) (strin
 	}
 }
 
-// Decrypt decrypts the given string using the provided key and returns the original data.
+// Decrypt decrypts the given string using the provided key and encryption algorithm.
 func Decrypt(encodedData string, key interface{}, encryptionType EncryptionType) ([]byte, error) {
 	switch encryptionType {
 	case AES:
 		// AES decryption
 		return decryptAES(encodedData, key.(string))
+	case DES:
+		// DES decryption
+		return decryptDES(encodedData, key.(string))
 	case RSA:
 		// RSA decryption
 		return decryptRSA(encodedData, key)
@@ -134,6 +145,48 @@ func decryptRSA(encodedData string, key interface{}) ([]byte, error) {
 	return rsa.DecryptPKCS1v15(rand.Reader, rsaPrivKey, ciphertext)
 }
 
+// Encrypt data using DES algorithm
+func encryptDES(data []byte, key string) (string, error) {
+	block, err := des.NewCipher([]byte(key))
+	if err != nil {
+		return "", err
+	}
+
+	ciphertext := make([]byte, des.BlockSize+len(data))
+	iv := ciphertext[:des.BlockSize]
+	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
+		return "", err
+	}
+
+	stream := cipher.NewCFBEncrypter(block, iv)
+	stream.XORKeyStream(ciphertext[des.BlockSize:], data)
+
+	return base64.URLEncoding.EncodeToString(ciphertext), nil
+}
+
+// Decrypt data using DES algorithm
+func decryptDES(encodedData string, key string) ([]byte, error) {
+	block, err := des.NewCipher([]byte(key))
+	if err != nil {
+		return nil, err
+	}
+
+	ciphertext, err := base64.URLEncoding.DecodeString(encodedData)
+	if err != nil {
+		return nil, err
+	}
+	if len(ciphertext) < des.BlockSize {
+		return nil, errors.InvalidData.New()
+	}
+	iv := ciphertext[:des.BlockSize]
+	ciphertext = ciphertext[des.BlockSize:]
+
+	stream := cipher.NewCFBDecrypter(block, iv)
+	stream.XORKeyStream(ciphertext, ciphertext)
+
+	return ciphertext, nil
+}
+
 // EncodeJSON encodes the given data in JSON format, then encrypts it using the provided key,
 // and returns the encoded string.
 func EncodeJSON(data interface{}, key interface{}, encryptionType EncryptionType) (string, error) {
@@ -153,6 +206,16 @@ func EncodeJSON(data interface{}, key interface{}, encryptionType EncryptionType
 			return "", errors.InvalidData.New()
 		}
 		encryptedData, err = Encrypt(jsonData, aesKey, AES)
+		if err != nil {
+			return "", err
+		}
+	case DES:
+		// For DES encryption, use the provided key as a string
+		desKey, ok := key.(string)
+		if !ok {
+			return "", errors.InvalidData.New()
+		}
+		encryptedData, err = encryptDES(jsonData, desKey)
 		if err != nil {
 			return "", err
 		}
@@ -183,6 +246,16 @@ func DecodeJSON(encodedData string, key interface{}, v interface{}, encryptionTy
 			return errors.InvalidData.New()
 		}
 		decryptedData, err = Decrypt(encodedData, aesKey, AES)
+		if err != nil {
+			return err
+		}
+	case DES:
+		// For DES decryption, use the provided key as a string
+		desKey, ok := key.(string)
+		if !ok {
+			return errors.InvalidData.New()
+		}
+		decryptedData, err = decryptDES(encodedData, desKey)
 		if err != nil {
 			return err
 		}
@@ -220,11 +293,17 @@ func GenerateAESKey(keyLength int) (string, error) {
 		return "", err
 	}
 
-	res := base64.URLEncoding.EncodeToString(key)
-	if ValidateAESKey(res) {
-		return res, nil
+	return customEncode(key), nil
+}
+
+// GenerateDESKey generates a random DES key of the specified length
+func GenerateDESKey() (string, error) {
+	key := make([]byte, bytesDES)
+	if _, err := rand.Read(key); err != nil {
+		return "", err
 	}
-	return "", errors.InvalidData.New()
+
+	return customEncode(key), nil
 }
 
 // ValidateAESKey checks if the given key is a valid AES key
@@ -233,7 +312,28 @@ func ValidateAESKey(key string) bool {
 	switch k {
 	default:
 		return false
-	case bytesAES128, bytesAES192, byteAES256:
+	case bytesAES128, bytesAES192, bytesAES256:
 		return true
 	}
+}
+
+// ValidateDESKey checks if the given key is a valid DES key
+func ValidateDESKey(key string) bool {
+	k := len([]byte(key))
+	switch k {
+	default:
+		return false
+	case bytesDES:
+		return true
+	}
+}
+
+// customEncode encodes a byte slice to a custom string without increasing its length
+func customEncode(data []byte) string {
+	const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-_=*./<>?(&^%$#@!~`)[]{}"
+	var encoded strings.Builder
+	for _, b := range data {
+		encoded.WriteByte(alphabet[b%byte(len(alphabet))])
+	}
+	return encoded.String()
 }
