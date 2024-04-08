@@ -286,7 +286,7 @@ func GenerateRSAKeyPair(keySize int) (*rsa.PrivateKey, error) {
 	return privateKey, nil
 }
 
-// GenerateAESKey generates a random AES key of the specified lengthd
+// GenerateAESKey generates a random AES key of the specified length
 func GenerateAESKey(keyLength int) (string, error) {
 	switch keyLength {
 	default:
