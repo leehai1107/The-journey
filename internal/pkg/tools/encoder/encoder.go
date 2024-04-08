@@ -286,17 +286,19 @@ func GenerateRSAKeyPair(keySize int) (*rsa.PrivateKey, error) {
 	return privateKey, nil
 }
 
-// GenerateAESKey generates a random AES key of the specified length
+// GenerateAESKey generates a random AES key of the specified lengthd
 func GenerateAESKey(keyLength int) (string, error) {
-	key := make([]byte, keyLength)
-	if _, err := rand.Read(key); err != nil {
-		return "", err
+	switch keyLength {
+	default:
+		return "", errors.InvalidData.New()
+	case bytesAES128, bytesAES192, bytesAES256:
+		key := make([]byte, keyLength)
+		if _, err := rand.Read(key); err != nil {
+			return "", err
+		}
+
+		return customEncode(key), nil
 	}
-	res := customEncode(key)
-	if ValidateAESKey(res) {
-		return res, nil
-	}
-	return "", errors.InvalidData.New()
 }
 
 // GenerateDESKey generates a random DES key of the specified length
