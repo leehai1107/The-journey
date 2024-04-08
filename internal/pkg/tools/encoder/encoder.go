@@ -292,8 +292,11 @@ func GenerateAESKey(keyLength int) (string, error) {
 	if _, err := rand.Read(key); err != nil {
 		return "", err
 	}
-
-	return customEncode(key), nil
+	res := customEncode(key)
+	if ValidateAESKey(res) {
+		return res, nil
+	}
+	return "", errors.InvalidData.New()
 }
 
 // GenerateDESKey generates a random DES key of the specified length
