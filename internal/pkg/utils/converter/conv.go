@@ -1,7 +1,11 @@
 package conv
 
 import (
+	"bytes"
+	"encoding/binary"
 	"encoding/json"
+	"math"
+	"reflect"
 	"strconv"
 	"time"
 )
@@ -145,6 +149,64 @@ func ConvertFloat32ToString(num float32) string {
 // ConvertFloat64ToString convert float32 to string
 func ConvertFloat64ToString(num float64) string {
 	return convertFloatToString(num, 64)
+}
+
+// ConvertToPointer convert any to pointer
+func ConvertToPointer(value interface{}) *any {
+	return &value
+}
+
+// ConvertToChar convert string to chars
+func ConvertStringToChars(s string) []string {
+	c := make([]string, 0)
+	if len(s) == 0 {
+		c = append(c, "")
+	}
+	for _, v := range s {
+		c = append(c, string(v))
+	}
+	return c
+}
+
+// ConvertToBytes convert any to bytes
+func ConvertAnyToBytes(value any) ([]byte, error) {
+	v := reflect.ValueOf(value)
+
+	switch value.(type) {
+	case int, int8, int16, int32, int64:
+		number := v.Int()
+		buf := bytes.NewBuffer([]byte{})
+		buf.Reset()
+		err := binary.Write(buf, binary.BigEndian, number)
+		return buf.Bytes(), err
+	case uint, uint8, uint16, uint32, uint64:
+		number := v.Uint()
+		buf := bytes.NewBuffer([]byte{})
+		buf.Reset()
+		err := binary.Write(buf, binary.BigEndian, number)
+		return buf.Bytes(), err
+	case float32:
+		number := float32(v.Float())
+		bits := math.Float32bits(number)
+		bytes := make([]byte, 4)
+		binary.BigEndian.PutUint32(bytes, bits)
+		return bytes, nil
+	case float64:
+		number := v.Float()
+		bits := math.Float64bits(number)
+		bytes := make([]byte, 8)
+		binary.BigEndian.PutUint64(bytes, bits)
+		return bytes, nil
+	case bool:
+		return strconv.AppendBool([]byte{}, v.Bool()), nil
+	case string:
+		return []byte(v.String()), nil
+	case []byte:
+		return v.Bytes(), nil
+	default:
+		newValue, err := json.Marshal(value)
+		return newValue, err
+	}
 }
 
 func AsString(src interface{}) string {
