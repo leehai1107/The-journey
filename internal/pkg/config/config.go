@@ -14,7 +14,7 @@ var (
 )
 
 type DBCfg struct {
-	PgHost            string `envconfig:"PG_HOST" default:"localhost"`
+	PgHost            string `envconfig:"PG_HOST" default:"db"`
 	PgPort            string `envconfig:"PG_PORT" default:"5432"`
 	PgUser            string `envconfig:"PG_USER" default:"postgres"`
 	PgPassword        string `envconfig:"PG_PASSWORD" default:"mysecretpassword"`
