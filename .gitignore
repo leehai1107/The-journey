@@ -2,15 +2,12 @@
 /vendor/
 
 .env
-coverage.html
-coverage.out
-app
+
 .vscode
 # Binaries for programs and plugins
 *.exe
 *.exe~
 *.dll
-__debug_bin
 .DS_Store
 
 # Go workspace file
